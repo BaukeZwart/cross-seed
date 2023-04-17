@@ -415,7 +415,7 @@ async function makeRequests(
 		for (const abortController of abortControllers) {
 			abortController.abort();
 		}
-	}, 90000).unref();
+	}, 120000).unref();
 
 	const outcomes = await Promise.allSettled<Candidate[]>(
 		searchUrls.map((url, i) =>

@@ -36,7 +36,7 @@ export async function parseTorrentFromURL(
 	url: string
 ): Promise<Result<Metafile, SnatchError>> {
 	const abortController = new AbortController();
-	setTimeout(() => void abortController.abort(), 90000).unref();
+	setTimeout(() => void abortController.abort(), 120000).unref();
 
 	let response: Response;
 	try {
