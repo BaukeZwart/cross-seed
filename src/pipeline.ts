@@ -253,7 +253,7 @@ export async function checkNewCandidateMatch(
 }
 
 async function findSearchableTorrents() {
-	const { torrents, dataDirs, torrentDir } = getRuntimeConfig();
+	const { torrents, dataDirs, torrentDir, searchLimit } = getRuntimeConfig();
 	let allSearchees: Searchee[] = [];
 	if (Array.isArray(torrents)) {
 		const searcheeResults = await Promise.all(
@@ -279,7 +279,7 @@ async function findSearchableTorrents() {
 	}
 
 	const hashesToExclude = allSearchees.map((t) => t.infoHash).filter(Boolean);
-	const filteredTorrents = await filterAsync(
+	let filteredTorrents = await filterAsync(
 		filterDupes(allSearchees).filter(filterByContent),
 		filterTimestamps
 	);
@@ -288,6 +288,15 @@ async function findSearchableTorrents() {
 		label: Label.SEARCH,
 		message: `Found ${allSearchees.length} torrents, ${filteredTorrents.length} suitable to search for matches`,
 	});
+
+	if (searchLimit && filteredTorrents.length > searchLimit) {
+		logger.info({
+			label: Label.SEARCH,
+			message: `Limited to ${searchLimit} searches`,
+		});
+
+		filteredTorrents = filteredTorrents.slice(0, searchLimit);
+	}
 
 	return { samples: filteredTorrents, hashesToExclude };
 }
